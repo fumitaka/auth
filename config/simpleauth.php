@@ -44,6 +44,11 @@ return array(
 	'table_columns' => null,
 
 	/**
+	 * Field type of 'created_at' and 'updated_at' in DB table is mysql timestamp or not.
+	 */
+	'table_mysql_timestamp' => true,
+
+	/**
 	 * This will allow you to use the group & acl driver for non-logged in users
 	 */
 	'guest_login' => true,

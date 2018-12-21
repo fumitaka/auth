@@ -255,15 +255,22 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 			}
 		}
 
+		if(\Config::get('simpleauth.table_mysql_timestamp'))
+		{
+			$created_at = \Date::forge()->format('mysql');
+		}
+		else
+		{
+			$created_at = \Date::forge()->get_timestamp();
+		}
 		$user = array(
 			'username'        => (string) $username,
 			'password'        => $this->hash_password((string) $password),
 			'email'           => $email,
 			'group'           => (int) $group,
 			'profile_fields'  => serialize($profile_fields),
-			'last_login'      => 0,
 			'login_hash'      => '',
-			'created_at'      => \Date::forge()->get_timestamp(),
+			'created_at'      => $created_at,
 		);
 		$result = \DB::insert(\Config::get('simpleauth.table_name'))
 			->set($user)
@@ -362,7 +369,14 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 			$update['profile_fields'] = serialize($profile_fields);
 		}
 
-		$update['updated_at'] = \Date::forge()->get_timestamp();
+		if(\Config::get('simpleauth.table_mysql_timestamp'))
+		{
+			$update['updated_at'] = \Date::forge()->format('mysql');
+		}
+		else
+		{
+			$update['updated_at'] = \Date::forge()->get_timestamp();
+		}
 
 		$affected_rows = \DB::update(\Config::get('simpleauth.table_name'))
 			->set($update)
@@ -459,7 +473,14 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 			throw new \SimpleUserUpdateException('User not logged in, can\'t create login hash.', 10);
 		}
 
-		$last_login = \Date::forge()->get_timestamp();
+		if(\Config::get('simpleauth.table_mysql_timestamp'))
+		{
+			$last_login = \Date::forge()->format('mysql');
+		}
+		else
+		{
+			$last_login = \Date::forge()->get_timestamp();
+		}
 		$login_hash = sha1(\Config::get('simpleauth.login_hash_salt').$this->user['username'].$last_login);
 
 		\DB::update(\Config::get('simpleauth.table_name'))
